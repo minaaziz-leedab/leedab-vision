@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<title>LeedAB — YC Pitch · Confidential</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,300;1,9..144,400;1,9..144,600&family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c10;
+    --bg-deep: #07090c;
+    --bg-elev: #12161d;
+    --bg-elev-2: #181d27;
+    --line: #1e2531;
+    --line-soft: #161b24;
+    --line-strong: #2a3243;
+    --text: #ece7d9;
+    --text-mid: #a8a395;
+    --text-dim: #6c685e;
+    --text-muted: #4a4740;
+    --vault: #d4a574;
+    --vault-bright: #f0c79a;
+    --vault-glow: rgba(212, 165, 116, 0.35);
+    --data: #7aa6ff;
+    --data-glow: rgba(122, 166, 255, 0.25);
+    --hot: #ff8b65;
+    --green: #84c178;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Fraunces', Georgia, serif;
+    font-optical-sizing: auto;
+    font-feature-settings: "ss01", "ss02";
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    min-height: 100vh;
+    padding: 64px 56px 96px;
+    position: relative;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0; pointer-events: none; z-index: -2;
+    background:
+      radial-gradient(ellipse 80% 60% at 75% 30%, rgba(212,165,116,0.06), transparent 60%),
+      radial-gradient(ellipse 70% 50% at 15% 80%, rgba(122,166,255,0.05), transparent 60%);
+  }
+  body::after {
+    content: '';
+    position: fixed; inset: 0; pointer-events: none; z-index: -1;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.4' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.45'/%3E%3C/svg%3E");
+    opacity: 0.05;
+    mix-blend-mode: overlay;
+  }
+
+  .frame { max-width: 1280px; margin: 0 auto; position: relative; }
+
+  /* CONFIDENTIAL banner */
+  .conf {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    background: linear-gradient(90deg, rgba(255,139,101,0.08), rgba(255,139,101,0.02));
+    border-bottom: 1px solid rgba(255,139,101,0.2);
+    padding: 6px 24px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--hot);
+    text-align: center;
+    z-index: 100;
+    backdrop-filter: blur(8px);
+  }
+
+  /* HEADER */
+  header {
+    padding: 60px 0 48px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 64px;
+    margin-top: 32px;
+  }
+  .meta-row {
+    display: flex; gap: 14px; align-items: center;
+    margin-bottom: 28px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--text-mid);
+  }
+  .meta-row .dot {
+    width: 6px; height: 6px;
+    background: var(--vault); border-radius: 50%;
+    box-shadow: 0 0 12px var(--vault-glow);
+  }
+  .meta-row .sep { color: var(--text-muted); }
+
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 300;
+    font-size: clamp(54px, 7vw, 96px);
+    line-height: 0.95;
+    letter-spacing: -0.025em;
+    color: var(--text);
+    margin-bottom: 24px;
+  }
+  h1 em {
+    font-style: italic; font-weight: 400; color: var(--vault);
+  }
+  .tagline {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 26px;
+    line-height: 1.4;
+    color: var(--text-mid);
+    max-width: 60ch;
+    margin-bottom: 40px;
+  }
+
+  .badges {
+    display: flex; gap: 12px; flex-wrap: wrap;
+  }
+  .badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 14px;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.05em;
+    color: var(--text-mid);
+  }
+  .badge.live { border-color: rgba(132,193,120,0.4); color: var(--green); }
+  .badge.live .dot { background: var(--green); box-shadow: 0 0 8px rgba(132,193,120,0.6); }
+  .badge .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--vault); box-shadow: 0 0 8px var(--vault-glow);
+  }
+  .badge b { color: var(--text); font-weight: 500; }
+
+  /* THESIS */
+  .thesis {
+    display: inline-flex; align-items: center; gap: 18px;
+    padding: 14px 26px 14px 22px;
+    background: linear-gradient(135deg, rgba(212,165,116,0.12), rgba(212,165,116,0.04));
+    border: 1px solid rgba(212,165,116,0.35);
+    border-radius: 999px;
+    margin-top: 32px;
+    box-shadow: 0 0 60px -20px var(--vault-glow), inset 0 1px 0 rgba(212,165,116,0.15);
+  }
+  .thesis .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--vault);
+    padding-right: 18px; border-right: 1px solid rgba(212,165,116,0.25);
+  }
+  .thesis .pitch {
+    font-family: 'Fraunces', serif; font-style: italic; font-weight: 400;
+    font-size: 22px; color: var(--vault-bright); letter-spacing: -0.005em;
+  }
+  .thesis .marker {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; color: var(--text-dim); letter-spacing: 0.1em;
+  }
+
+  /* SECTION */
+  section {
+    margin-bottom: 80px;
+  }
+  .section-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--text-dim);
+    margin-bottom: 14px;
+  }
+  h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 300; font-style: italic;
+    font-size: clamp(36px, 4.5vw, 56px);
+    line-height: 1.05; letter-spacing: -0.02em;
+    color: var(--text);
+    margin-bottom: 32px;
+  }
+  h2 em { font-style: italic; color: var(--vault); font-weight: 400; }
+
+  .lead {
+    font-family: 'Fraunces', serif;
+    font-size: 22px; line-height: 1.5;
+    color: var(--text-mid);
+    max-width: 70ch;
+    margin-bottom: 24px;
+  }
+  .lead b { color: var(--text); font-weight: 500; }
+
+  /* PROBLEM */
+  .problem-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+  }
+  .problem-cell {
+    background: var(--bg);
+    padding: 28px 24px;
+  }
+  .problem-cell .num {
+    font-family: 'Fraunces', serif; font-style: italic;
+    font-size: 32px; color: var(--vault); line-height: 1;
+    margin-bottom: 18px; font-weight: 300;
+  }
+  .problem-cell h3 {
+    font-family: 'Fraunces', serif; font-size: 18px;
+    color: var(--text); margin-bottom: 10px; font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+  .problem-cell p {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; line-height: 1.7; color: var(--text-mid);
+    letter-spacing: 0.005em;
+  }
+
+  /* SOLUTION (3-claim defensibility ladder) */
+  .claims {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .claim {
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    gap: 28px;
+    padding: 28px 32px;
+    border: 1px solid var(--line-strong);
+    border-radius: 4px;
+    background: linear-gradient(135deg, rgba(212,165,116,0.04), transparent);
+  }
+  .claim.featured {
+    border-color: rgba(212,165,116,0.4);
+    background: linear-gradient(135deg, rgba(212,165,116,0.08), rgba(212,165,116,0.02));
+    box-shadow: 0 0 60px -20px var(--vault-glow);
+  }
+  .claim .num {
+    font-family: 'Fraunces', serif; font-style: italic;
+    font-size: 56px; color: var(--vault);
+    line-height: 0.85; font-weight: 300;
+    border-right: 1px solid rgba(212,165,116,0.2);
+    padding-right: 24px;
+  }
+  .claim h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 24px;
+    line-height: 1.2;
+    color: var(--text);
+    letter-spacing: -0.015em;
+    margin-bottom: 10px;
+  }
+  .claim h3 em { color: var(--vault-bright); }
+  .claim p {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; line-height: 1.7;
+    color: var(--text-mid); letter-spacing: 0.005em;
+  }
+
+  /* WHY NOW */
+  .waves {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  .wave {
+    padding: 28px 24px;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    background: var(--bg-elev);
+  }
+  .wave .icon {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 40px; color: var(--data);
+    line-height: 1; margin-bottom: 16px; font-weight: 300;
+  }
+  .wave h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 18px; color: var(--text);
+    margin-bottom: 10px; font-weight: 500;
+    line-height: 1.25; letter-spacing: -0.01em;
+  }
+  .wave p {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; line-height: 1.7; color: var(--text-mid);
+  }
+
+  /* TRACTION */
+  .traction {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+  }
+  .traction-cell {
+    background: var(--bg);
+    padding: 28px 22px;
+    text-align: center;
+  }
+  .traction-cell .num {
+    font-family: 'Fraunces', serif;
+    font-weight: 300; font-style: italic;
+    font-size: 56px; color: var(--vault);
+    line-height: 1; margin-bottom: 10px;
+  }
+  .traction-cell .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--text-mid);
+  }
+  .traction-cell .sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px; color: var(--text-dim);
+    margin-top: 6px; letter-spacing: 0.05em;
+  }
+
+  /* TEAM */
+  .team {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+  .founder {
+    padding: 28px 28px 24px;
+    border: 1px solid var(--line-strong);
+    border-radius: 4px;
+    background: var(--bg-elev);
+  }
+  .founder .role {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--vault);
+    margin-bottom: 12px;
+  }
+  .founder h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 400; font-style: italic;
+    font-size: 28px; color: var(--text);
+    line-height: 1.05; letter-spacing: -0.015em;
+    margin-bottom: 14px;
+  }
+  .founder ul {
+    list-style: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; line-height: 1.85;
+    color: var(--text-mid);
+  }
+  .founder ul li::before { content: '— '; color: var(--vault); }
+  .founder ul b { color: var(--text); font-weight: 500; }
+
+  /* PLAN */
+  .plan {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+  }
+  .quarter {
+    background: var(--bg);
+    padding: 24px 20px;
+  }
+  .quarter .q {
+    font-family: 'Fraunces', serif; font-style: italic;
+    font-size: 22px; color: var(--vault); line-height: 1;
+    margin-bottom: 4px; font-weight: 400;
+  }
+  .quarter .when {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.12em;
+    color: var(--text-dim); margin-bottom: 16px;
+  }
+  .quarter .target {
+    font-family: 'Fraunces', serif;
+    font-size: 14px; color: var(--text);
+    margin-bottom: 10px; font-weight: 500;
+    line-height: 1.3;
+  }
+  .quarter ul {
+    list-style: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; line-height: 1.75;
+    color: var(--text-mid);
+  }
+  .quarter ul li::before { content: '· '; color: var(--vault); }
+
+  /* ASK */
+  .ask {
+    padding: 48px 56px;
+    border: 1px solid rgba(212,165,116,0.4);
+    border-radius: 4px;
+    background: linear-gradient(135deg, rgba(212,165,116,0.08), rgba(212,165,116,0.02));
+    box-shadow: 0 0 80px -20px var(--vault-glow);
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 56px;
+    align-items: center;
+  }
+  .ask-amount {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 96px;
+    line-height: 0.9;
+    color: var(--vault-bright);
+    letter-spacing: -0.03em;
+  }
+  .ask-amount .pct {
+    display: block;
+    font-size: 22px; color: var(--vault); margin-top: 8px;
+    font-style: normal; letter-spacing: 0.05em;
+  }
+  .ask-detail h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 22px; color: var(--text);
+    margin-bottom: 14px; font-style: italic; font-weight: 400;
+  }
+  .ask-detail ul {
+    list-style: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; line-height: 1.85;
+    color: var(--text-mid);
+  }
+  .ask-detail ul li::before { content: '→ '; color: var(--vault); }
+  .ask-detail ul b { color: var(--text); font-weight: 500; }
+
+  /* FUTURE — hardware, deemphasised */
+  .future {
+    margin-top: 64px;
+    padding: 32px 36px;
+    border: 1px dashed var(--line-strong);
+    border-radius: 4px;
+    background: var(--bg-deep);
+    opacity: 0.85;
+  }
+  .future .future-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--text-dim);
+    margin-bottom: 12px;
+  }
+  .future h3 {
+    font-family: 'Fraunces', serif; font-style: italic;
+    font-weight: 400; font-size: 22px; color: var(--text-mid);
+    margin-bottom: 10px;
+  }
+  .future p {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; line-height: 1.7; color: var(--text-dim);
+    max-width: 80ch;
+  }
+
+  /* COMPETITION TABLE */
+  .compete {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+  }
+  .compete-cell {
+    background: var(--bg);
+    padding: 24px 22px;
+  }
+  .compete-cell h4 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--text-dim);
+    margin-bottom: 10px;
+  }
+  .compete-cell .who {
+    font-family: 'Fraunces', serif;
+    font-size: 16px; color: var(--text);
+    margin-bottom: 12px; font-weight: 500;
+    line-height: 1.3;
+  }
+  .compete-cell p {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; line-height: 1.65; color: var(--text-mid);
+  }
+  .compete-cell .diff { color: var(--vault); font-weight: 500; }
+
+  /* FOOTER */
+  footer {
+    margin-top: 96px;
+    padding-top: 32px;
+    border-top: 1px solid var(--line);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 32px;
+    align-items: end;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  footer .signature {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--vault);
+    letter-spacing: 0.02em;
+    text-transform: none;
+  }
+
+  @media (max-width: 1024px) {
+    body { padding: 64px 24px 64px; }
+    .problem-grid, .waves, .compete { grid-template-columns: 1fr; }
+    .traction { grid-template-columns: repeat(2, 1fr); }
+    .plan { grid-template-columns: repeat(2, 1fr); }
+    .team { grid-template-columns: 1fr; }
+    .ask { grid-template-columns: 1fr; gap: 24px; }
+    .ask-amount { font-size: 64px; }
+    .claim { grid-template-columns: 60px 1fr; gap: 18px; padding: 22px 22px; }
+    .claim .num { font-size: 40px; padding-right: 14px; }
+  }
+</style>
+</head>
+<body>
+<div class="conf">★ confidential · YC pitch · for cofounder + investor review only · do not distribute</div>
+<div class="frame">
+
+  <!-- ═══ HEADER ═══════════════════════════════════════════ -->
+  <header>
+    <div class="meta-row">
+      <span class="dot"></span>
+      <span>LeedAB</span>
+      <span class="sep">·</span>
+      <span>Y Combinator pitch</span>
+      <span class="sep">·</span>
+      <span>v1.0 · 2026·04·30</span>
+    </div>
+    <h1>An <em>AI co-founder</em> your business owns.</h1>
+    <p class="tagline">
+      LeedAB is a local-first AI co-founder for SMBs — a roster of up to 31 specialised agents; each customer gets the subset their business actually needs. The whole stack runs on their own machine and operates the back-office through Telegram.
+    </p>
+    <div class="badges">
+      <span class="badge live"><span class="dot"></span><b>1</b> paying customer</span>
+      <span class="badge"><span class="dot"></span>up to <b>31</b> agents per customer</span>
+      <span class="badge"><span class="dot"></span><b>2</b> cofounders</span>
+      <span class="badge"><span class="dot"></span>Sydney, AU</span>
+      <span class="badge"><span class="dot"></span>Bootstrapped</span>
+    </div>
+    <div class="thesis">
+      <span class="label">The pitch</span>
+      <span class="pitch">"Their data, locally."</span>
+      <span class="marker">— three words tight</span>
+    </div>
+  </header>
+
+  <!-- ═══ PROBLEM ═══════════════════════════════════════ -->
+  <section>
+    <div class="section-eyebrow">The Problem</div>
+    <h2>SMBs run on the operational memory of <em>two or three people</em>.</h2>
+    <p class="lead">
+      When those people leave, take vacations, or get overwhelmed, the business stalls. AI agents can absorb that operational memory — but only if it lives in a place the customer owns and can audit. <b>Cloud-AI products lose that trust. Local-AI products do not.</b>
+    </p>
+    <div class="problem-grid">
+      <div class="problem-cell">
+        <div class="num">1</div>
+        <h3>Vendor lock-in</h3>
+        <p>Cloud AI products hold customer data in proprietary stores. When the vendor pivots, prices, or breaks — customer is stuck or starts over. SMBs have heard this story too many times in 2026.</p>
+      </div>
+      <div class="problem-cell">
+        <div class="num">2</div>
+        <h3>Privacy & compliance</h3>
+        <p>Logistics, professional services, regulated trades — every SMB has data that contractually cannot leave their network. Cloud AI doesn't pass procurement at most of them.</p>
+      </div>
+      <div class="problem-cell">
+        <div class="num">3</div>
+        <h3>State fragmentation</h3>
+        <p>Customer runs Xero + ServiceM8 + Gmail + Notion. Each tool keeps its own state; the operator stitches them together by hand. The "AI" in each is shallow because it can only see its own slice.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ SOLUTION ═══════════════════════════════════════ -->
+  <section>
+    <div class="section-eyebrow">What we make</div>
+    <h2>Up to <em>thirty-one</em> agents — pick the subset your business actually needs.</h2>
+    <p class="lead">
+      Customer's team talks to <b>one</b> bot on Telegram. A COO orchestrator routes to the licensed sub-agents — typically 5 to 15 of the canonical roster, selected per-customer via the license-key manifest. A solo legal practice gets a different subset than a 30-person logistics company. Cross-cutting questions have a home; cost, latency, and isolation are enforced centrally. Memory lives in a <b>per-business Obsidian vault</b> on the customer's hardware — they own it, can audit it, can leave with it.
+    </p>
+
+    <div class="section-eyebrow" style="margin-top:36px">Three claims, ranked by defensibility</div>
+
+    <div class="claims">
+      <div class="claim featured">
+        <div class="num">1</div>
+        <div>
+          <h3>Local-first by design — <em>"their data, locally"</em></h3>
+          <p>LeedAB OS installs on the customer's own machine. Customer data never leaves except as Anthropic API request/response — and even then only prompts go out, not raw business data. Most AI-agent products invert this. We don't.</p>
+        </div>
+      </div>
+      <div class="claim">
+        <div class="num">2</div>
+        <div>
+          <h3>Per-business <em>Obsidian brain</em> as the nervous system</h3>
+          <p>Every customer gets a markdown vault on their hardware that all their agents read and write. State doesn't fragment across SaaS tools. The customer can fork it, audit it, leave with it. Markdown is durable. The customer-owned brain is the actual moat.</p>
+        </div>
+      </div>
+      <div class="claim">
+        <div class="num">3</div>
+        <div>
+          <h3>Single-bot routing via a <em>COO orchestrator</em></h3>
+          <p>One conversational surface per customer. The COO delegates to sub-agents and synthesises one reply. Five reliability guarantees enforced centrally: every inbound gets a reply, no hallucinated answers, no cross-customer context leaks, cost cap per orchestration, audit log of every delegation.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ DEFENSIBILITY ═══════════════════════════════════ -->
+  <section>
+    <div class="section-eyebrow">The Moat</div>
+    <h2>If a competitor copies our agents next week, what do we still have?</h2>
+    <p class="lead">
+      The agents are copyable in days. The orchestrator is copyable in weeks. The channels are copyable in days. <b>The customer's installed brain is copyable never</b> — their data is theirs. The trust built by letting them leave easily IS the lock-in. Counter-intuitive, but real.
+    </p>
+  </section>
+
+  <!-- ═══ WHY NOW ═══════════════════════════════════════ -->
+  <section>
+    <div class="section-eyebrow">Why now</div>
+    <h2>Three converging waves in <em>2026</em>.</h2>
+    <div class="waves">
+      <div class="wave">
+        <div class="icon">i.</div>
+        <h3>Tool-use is finally good enough</h3>
+        <p>Sonnet 4.6 and Opus 4.7 can drive a real workflow without constant supervision. Two years ago the loops broke; now they don't. The capability landed in 2026.</p>
+      </div>
+      <div class="wave">
+        <div class="icon">ii.</div>
+        <h3>Consumer hardware runs production AI</h3>
+        <p>Modern Mac Mini M-series and UGREEN AI NAS match cloud performance for the agent loop at consumer prices. Five years ago this required a server rack. Now it sits on a desk.</p>
+      </div>
+      <div class="wave">
+        <div class="icon">iii.</div>
+        <h3>SMBs are skeptical of cloud AI</h3>
+        <p>Privacy reporting, lock-in horror stories, and AI-vendor pivots have made local-first land in 2026 in a way it didn't in 2022. Buyers ask "but does it leak my data?" before "but does it work?".</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ TRACTION ═══════════════════════════════════════ -->
+  <section>
+    <div class="section-eyebrow">Where we are</div>
+    <h2>Already <em>shipping</em>, not planning.</h2>
+    <div class="traction">
+      <div class="traction-cell">
+        <div class="num">1</div>
+        <div class="label">paying customer</div>
+        <div class="sub">logistics SMB · NSW</div>
+      </div>
+      <div class="traction-cell">
+        <div class="num">31</div>
+        <div class="label">canonical agents</div>
+        <div class="sub">live in workspace</div>
+      </div>
+      <div class="traction-cell">
+        <div class="num">8</div>
+        <div class="label">ADRs locked</div>
+        <div class="sub">architecture decided</div>
+      </div>
+      <div class="traction-cell">
+        <div class="num">3</div>
+        <div class="label">private repos</div>
+        <div class="sub">code · workspace · brain</div>
+      </div>
+    </div>
+    <p class="lead" style="margin-top:32px">
+      Real product, real revenue, real workflows. Manifest reorg + COO orchestrator are in flight; per-business brain provisioning is dogfooded against LeedAB's own internal vault. Our public architecture diagram is at <code style="font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--vault)">minaaziz-leedab.github.io/leedab-vision</code>.
+    </p>
+  </section>
+
+  <!-- ═══ COMPETITION ═══════════════════════════════════ -->
+  <section>
+    <div class="section-eyebrow">Why we're different</div>
+    <h2>The competitive landscape.</h2>
+    <div class="compete">
+      <div class="compete-cell">
+        <h4>Cloud AI agents</h4>
+        <div class="who">OpenAI Operator, Devin, every YC AI batch</div>
+        <p><span class="diff">Difference:</span> they hold customer data; we don't. Same agents copyable in days; sovereignty isn't.</p>
+      </div>
+      <div class="compete-cell">
+        <h4>Vertical SaaS with AI</h4>
+        <div class="who">Xero, MYOB, ServiceM8 + AI features</div>
+        <p><span class="diff">Difference:</span> agent-as-feature; LeedAB is agent-first, with the surface flowing FROM the customer's vault. Composable; their tools are siloed.</p>
+      </div>
+      <div class="compete-cell">
+        <h4>AI consultancies</h4>
+        <div class="who">Bespoke "AI for your business" engagements</div>
+        <p><span class="diff">Difference:</span> they ship custom builds; LeedAB ships a productised system that gets better the longer the customer has it.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ TEAM ═══════════════════════════════════════ -->
+  <section>
+    <div class="section-eyebrow">Team</div>
+    <h2>The unfair advantages.</h2>
+    <div class="team">
+      <div class="founder">
+        <div class="role">Cofounder · Product + Engineering</div>
+        <h3>Mina Aziz</h3>
+        <ul>
+          <li>Master's in <b>Cyber Security</b> (Macquarie) — security-first by training, not by accident</li>
+          <li><b>3+ years Microsoft Sydney Azure PM</b> (FastTrack + Red Flag, 2022–2025)</li>
+          <li>BSc Computer Science & Business Management (Loughborough UK)</li>
+          <li>Currently <b>Master's in AI at UTS</b>, Academic Excellence International Scholarship</li>
+          <li>Sydney-based · full-time on the build</li>
+        </ul>
+      </div>
+      <div class="founder">
+        <div class="role">Cofounder · Engineering + Business</div>
+        <h3>Muiez</h3>
+        <ul>
+          <li>Owner of canonical <b>LeedAB-OS</b> codebase</li>
+          <li>Engineering leadership on the runtime + orchestrator</li>
+          <li>Working with Mina on cofounder-shared decisions</li>
+          <li><i>Bio + role specifics filled in pre-submission</i></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ 12-MONTH PLAN ═══════════════════════════════════ -->
+  <section>
+    <div class="section-eyebrow">Twelve-month plan</div>
+    <h2>The path to <em>twenty-five paying customers</em>.</h2>
+    <div class="plan">
+      <div class="quarter">
+        <div class="q">Q1</div>
+        <div class="when">May–Jul 2026</div>
+        <div class="target">Foundation</div>
+        <ul>
+          <li>Manifest reorg ships</li>
+          <li>COO orchestrator hardened</li>
+          <li>3 paying customers</li>
+          <li>Tarheel maintained</li>
+        </ul>
+      </div>
+      <div class="quarter">
+        <div class="q">Q2</div>
+        <div class="when">Aug–Oct 2026</div>
+        <div class="target">Scale enablement</div>
+        <ul>
+          <li>Champion agent ships</li>
+          <li>Professional-services vertical</li>
+          <li>8 paying customers</li>
+          <li>Ziad onboarded + producing</li>
+        </ul>
+      </div>
+      <div class="quarter">
+        <div class="q">Q3</div>
+        <div class="when">Nov 2026 – Jan 2027</div>
+        <div class="target">Pilot the appliance</div>
+        <ul>
+          <li>15 paying customers (software-only)</li>
+          <li>1–2 hardware reference customers</li>
+          <li>Brain provisioning automated</li>
+        </ul>
+      </div>
+      <div class="quarter">
+        <div class="q">Q4</div>
+        <div class="when">Feb–Apr 2027</div>
+        <div class="target">International + decide</div>
+        <ul>
+          <li>25 paying customers</li>
+          <li>NZ then SE Asia</li>
+          <li>Appliance launch decision</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ ASK ═══════════════════════════════════════ -->
+  <section>
+    <div class="section-eyebrow">The ask</div>
+    <h2>What we want from <em>YC</em>.</h2>
+    <div class="ask">
+      <div class="ask-amount">
+        $500K
+        <span class="pct">for 7%</span>
+      </div>
+      <div class="ask-detail">
+        <h3>What we'll do with it</h3>
+        <ul>
+          <li><b>Two engineering hires</b> beyond Ziad (joins Feb 2026 already)</li>
+          <li><b>Twelve-month runway extension</b> — focus on customer success, not fundraising</li>
+          <li><b>R&D toward the appliance form factor</b> — software-only at v1; hardware launch decided based on Q3 pilot data</li>
+          <li><b>Limited paid marketing</b> — local-first isn't a paid-ad story; growth is referral + content + customer case studies</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ FUTURE (de-emphasised) ═══════════════════════════ -->
+  <section class="future">
+    <div class="future-tag">Future amplifier · 12–24 mo destination</div>
+    <h3>The appliance form factor</h3>
+    <p>
+      Mac Mini + UGREEN AI NAS as a productised hardware option, shipped to customer premises at conversion. Kept off the v1 critical path because hardware logistics scale slower than software. Once paying-customer count justifies fleet operations, the appliance becomes the credibility multiplier for the local-first thesis. <b>Not a v1 dependency.</b> The local-first guarantee already holds at v1 because the LeedAB OS installs on the customer's existing hardware.
+    </p>
+  </section>
+
+  <!-- ═══ FOOTER ═══════════════════════════════════════ -->
+  <footer>
+    <div>
+      LeedAB · Y Combinator pitch · v1.0 · 2026·04·30 · sovereign-by-default
+    </div>
+    <div class="signature">
+      Mina Aziz + Muiez · Sydney, AU
+    </div>
+  </footer>
+
+</div>
+</body>
+</html>
