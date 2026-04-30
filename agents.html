@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<title>LeedAB — Agent Roster</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,300;1,9..144,400&family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c10;
+    --bg-deep: #07090c;
+    --bg-elev: #12161d;
+    --bg-elev-2: #181d27;
+    --line: #1e2531;
+    --line-strong: #2a3243;
+    --text: #ece7d9;
+    --text-mid: #a8a395;
+    --text-dim: #6c685e;
+    --vault: #d4a574;
+    --vault-bright: #f0c79a;
+    --vault-glow: rgba(212, 165, 116, 0.35);
+    --green: #84c178;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Fraunces', Georgia, serif;
+    font-optical-sizing: auto;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    min-height: 100vh;
+    padding: 64px 56px 96px;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0; pointer-events: none; z-index: -2;
+    background:
+      radial-gradient(ellipse 80% 60% at 75% 30%, rgba(212,165,116,0.06), transparent 60%),
+      radial-gradient(ellipse 70% 50% at 15% 80%, rgba(122,166,255,0.04), transparent 60%);
+  }
+  body::after {
+    content: '';
+    position: fixed; inset: 0; pointer-events: none; z-index: -1;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.4' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.45'/%3E%3C/svg%3E");
+    opacity: 0.05; mix-blend-mode: overlay;
+  }
+  .frame { max-width: 1280px; margin: 0 auto; }
+
+  header {
+    padding-bottom: 56px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 56px;
+  }
+  .meta-row {
+    display: flex; gap: 14px; align-items: center;
+    margin-bottom: 28px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--text-mid);
+  }
+  .meta-row .dot {
+    width: 6px; height: 6px;
+    background: var(--vault); border-radius: 50%;
+    box-shadow: 0 0 12px var(--vault-glow);
+  }
+  .meta-row .sep { color: var(--text-dim); }
+
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 300;
+    font-size: clamp(48px, 6vw, 84px);
+    line-height: 0.95;
+    letter-spacing: -0.025em;
+    margin-bottom: 16px;
+  }
+  h1 em { font-style: italic; font-weight: 400; color: var(--vault); }
+  .subtitle {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 22px;
+    line-height: 1.5;
+    color: var(--text-mid);
+    max-width: 80ch;
+    margin-bottom: 32px;
+  }
+  .subtitle b { color: var(--text); font-weight: 500; font-style: normal; }
+
+  .legend {
+    display: flex; gap: 18px; flex-wrap: wrap;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: var(--text-mid);
+  }
+  .legend-item { display: flex; align-items: center; gap: 8px; }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .legend-dot.active { background: var(--green); box-shadow: 0 0 8px rgba(132,193,120,0.5); }
+  .legend-dot.idle { background: var(--text-dim); }
+  .legend-dot.new { background: #22d3ee; box-shadow: 0 0 8px rgba(34,211,238,0.5); }
+
+  .team {
+    margin-bottom: 56px;
+  }
+  .team-head {
+    display: flex; align-items: baseline; gap: 16px;
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--line);
+  }
+  .team-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+  .team-count {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; color: var(--text-dim);
+    letter-spacing: 0.12em;
+  }
+  .team-bar {
+    flex: 1; height: 1px; background: linear-gradient(90deg, currentColor, transparent);
+    margin-left: 8px; opacity: 0.4;
+  }
+
+  .agents-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+  }
+  .agent {
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 22px 22px 20px;
+    background: var(--bg-elev);
+    transition: border-color 0.2s, transform 0.2s;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .agent:hover {
+    border-color: var(--line-strong);
+    transform: translateY(-1px);
+  }
+  .agent.new {
+    border-color: rgba(34,211,238,0.4);
+    background: linear-gradient(135deg, rgba(34,211,238,0.06), rgba(34,211,238,0.02));
+    box-shadow: 0 0 40px -20px rgba(34,211,238,0.4);
+  }
+  .agent-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .glyph {
+    width: 38px; height: 38px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: white;
+    flex-shrink: 0;
+  }
+  .agent-name {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 22px;
+    color: var(--text);
+    line-height: 1;
+    letter-spacing: -0.015em;
+  }
+  .agent-tagline {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    color: var(--text-mid);
+    letter-spacing: 0.05em;
+    margin-top: 2px;
+  }
+  .agent-desc {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    line-height: 1.7;
+    color: var(--text-mid);
+    flex: 1;
+  }
+  .agent-foot {
+    display: flex; gap: 10px; align-items: center;
+    margin-top: 6px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--line);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .status-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .status-dot { width: 6px; height: 6px; border-radius: 50%; }
+  .status-dot.active { background: var(--green); box-shadow: 0 0 6px rgba(132,193,120,0.5); }
+  .status-dot.idle { background: var(--text-dim); }
+  .new-badge {
+    margin-left: auto;
+    padding: 2px 8px;
+    font-size: 9px;
+    color: #22d3ee;
+    border: 1px solid rgba(34,211,238,0.4);
+    border-radius: 99px;
+    letter-spacing: 0.12em;
+  }
+
+  footer {
+    margin-top: 96px;
+    padding-top: 32px;
+    border-top: 1px solid var(--line);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 32px;
+    align-items: end;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  footer .signature {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--vault);
+    letter-spacing: 0.02em;
+    text-transform: none;
+  }
+
+  @media (max-width: 720px) {
+    body { padding: 32px 18px 64px; }
+    .agents-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="frame">
+
+  <header>
+    <div class="meta-row">
+      <span class="dot"></span>
+      <span>LeedAB</span>
+      <span class="sep">·</span>
+      <span>Agent Roster</span>
+      <span class="sep">·</span>
+      <span>2026·04·30</span>
+      <span class="sep">·</span>
+      <span>internal share — not for indexing</span>
+    </div>
+    <h1>The <em>roster</em> — 31 agents.</h1>
+    <p class="subtitle">
+      LeedAB ships up to <b>31 specialised agents</b>. Each customer gets the subset their business actually needs — typically 5 to 15 of them, selected via the per-license-key manifest. A solo legal practice gets a different team than a 30-person logistics company. Below: every canonical agent, what they do, and which team they sit in.
+    </p>
+    <div class="legend">
+      <span class="legend-item"><span class="legend-dot active"></span>Active — shipping, used today</span>
+      <span class="legend-item"><span class="legend-dot idle"></span>Idle — built, awaiting customer load</span>
+      <span class="legend-item"><span class="legend-dot new"></span>Newly added (2026-04-30)</span>
+    </div>
+  </header>
+
+  <!-- COO -->
+  <section class="team">
+    <div class="team-head" style="color:#c95c0a">
+      <span class="team-name">COO · Executive</span>
+      <span class="team-count">1 agent</span>
+      <span class="team-bar"></span>
+    </div>
+    <div class="agents-grid">
+      <div class="agent">
+        <div class="agent-head">
+          <div class="glyph" style="background:#10b981">CO</div>
+          <div>
+            <div class="agent-name">COO</div>
+            <div class="agent-tagline">Org coordination, daily briefs</div>
+          </div>
+        </div>
+        <div class="agent-desc">Cross-team coordination, priority calls, daily ops briefs, delegation recommendations. The orchestrator: every customer message routes through here; the COO delegates to licensed sub-agents and synthesises one reply.</div>
+        <div class="agent-foot">
+          <span class="status-pill"><span class="status-dot active"></span>active</span>
+          <span>· dual-mode: customer-facing + LeedAB-internal</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXECUTIVE -->
+  <section class="team">
+    <div class="team-head" style="color:#10b981">
+      <span class="team-name">Executive</span>
+      <span class="team-count">1 agent</span>
+      <span class="team-bar"></span>
+    </div>
+    <div class="agents-grid">
+      <div class="agent">
+        <div class="agent-head">
+          <div class="glyph" style="background:#10b981">CC</div>
+          <div>
+            <div class="agent-name">Concierge</div>
+            <div class="agent-tagline">Calendar, travel, life logistics</div>
+          </div>
+        </div>
+        <div class="agent-desc">Founder-only personal assistant. Calendar defence, travel, expenses, meeting prep.</div>
+        <div class="agent-foot"><span class="status-pill"><span class="status-dot active"></span>active</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GROWTH (marketing team) -->
+  <section class="team">
+    <div class="team-head" style="color:#b87850">
+      <span class="team-name">Growth · Marketing</span>
+      <span class="team-count">6 agents</span>
+      <span class="team-bar"></span>
+    </div>
+    <div class="agents-grid">
+      <div class="agent">
+        <div class="agent-head">
+          <div class="glyph" style="background:#b87850">MK</div>
+          <div><div class="agent-name">Marketing</div><div class="agent-tagline">Team lead, brand, ICP, strategy</div></div>
+        </div>
+        <div class="agent-desc">Marketing team lead. Brand voice, ICP definition, marketing strategy, and cross-channel oversight.</div>
+        <div class="agent-foot"><span class="status-pill"><span class="status-dot active"></span>active</span></div>
+      </div>
+      <div class="agent">
+        <div class="agent-head">
+          <div class="glyph" style="background:#b87850">CN</div>
+          <div><div class="agent-name">Content</div><div class="agent-tagline">Long-form, SEO, newsletters</div></div>
+        </div>
+        <div class="agent-desc">Blog posts, SEO content, newsletters, case studies, long-form thought-leadership pieces.</div>
+        <div class="agent-foot"><span class="status-pill"><span class="status-dot active"></span>active</span></div>
+      </div>
+      <div class="agent">
+        <div class="agent-head">
+          <div class="glyph" style="background:#b87850">VD</div>
+          <div><div class="agent-name">Video</div><div class="agent-tagline">Scripts, storyboards, briefs</div></div>
+        </div>
+        <div class="agent-desc">Video scripts, storyboards, demo briefs, talking-head outlines for short-form and YouTube.</div>
+        <div class="agent-foot"><span class="status-pill"><span class="status-dot idle"></span>idle</span></div>
+      </div>
+      <div class="agent">
+        <div class="agent-head">
+          <div class="glyph" style="background:#b87850">CP</div>
+          <div><div class="agent-name">Campaigns</div><div class="agent-tagline">Paid ads, A/B, growth, CAC</div></div>
+        </div>
+        <div class="agent-desc">Paid ad campaigns, A/B test design, growth experiments, CAC analysis, channel optimisation.</div>
+        <div class="agent-foot"><span class="status-pill"><span class="status-dot active"></span>active</span></div>
+      </div>
+      <div class="agent">
+        <div class="agent-head">
+          <div class="glyph" style="background:#b87850">EM</div>
+          <div><div class="agent-name">Email</div><div class="agent-tagline">Inbox triage, drafts, sequences</div></div>
+        </div>
+        <div class="agent-desc">Inbox triage, email drafting, follow-up sequences, action-item extraction from threads, daily digest. Hard send-safety rules: subject + recipient + first 100 chars surfaced before any send.</div>
+        <div class="agent-foot"><span class="status-pill"><span class="status-dot active"></span>active</span></div>
+      </div>
+      <div class="agent">
+        <div class="agent-head">
+          <div class="glyph" style="background:#f59e0b">BR</div>
+          <div><div class="agent-name">Brand</div><div class="agent-tagline">Visual identity, decks, guardrails</div></div>
+        </div>
+        <div class="agent-desc">Brand consistency, deck design, visual identity, asset briefs, brand audits. Lives next to Growth but with its own colour for visual distinction.</div>
+        <div class="agent-foot"><span class="status-pill"><span class="status-dot active"></span>active</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SALES -->
+  <section class="team">
+    <div class="team-head" style="color:#b8633a">
+      <span class="team-name">Sales</span>
+      <span class="team-count">1 agent</span>
+      <span class="team-bar"></span>
+    </div>
+    <div class="agents-grid">
+      <div class="agent">
+        <div class="agent-head">
+          <div class="glyph" style="background:#b8633a">SL</div>
+          <div><div class="agent-name">Sales</div><div class="agent-tagline">Proposals, outreach, deals</div></div>
+        </div>
+        <div class="agent-desc">Proposals, outreach sequences, deal memos, pipeline progression. Hands prospects to Solutions for discovery + demo, hands signed customers to Onboarding.</div>
+        <div class="agent-foot"><span class="status-pill"><span class="status-dot active"></span>active</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DELIVERY -->
+  <section class="team">
+    <div class="team-head" style="color:#5a8a7a">
+      <span class="team-name">Delivery · Customer lifecycle</span>
+      <span class="team-count">5 agents</span>
+      <span class="team-bar"></span>
+    </div>
+    <div class="agents-grid">
+      <div class="agent">
+        <div class="agent-head">
+          <div class="glyph" style="background:#5a8a7a">DL</div>
+          <div><div class="agent-name">Delivery</div><div class="agent-tagline">Operational health, escalations</div></div>
+        </div>
+        <div class="agent-desc">Owns ongoing customer health, escalation paths, cross-customer ops patterns. Receives handoffs from Onboarding and routes specialists. Surfaces churn signals.</div>
+        <div class="agent-foot"><span class="status-pill"><span class="status-dot idle"></span>idle</span></div>
+      </div>
+      <div class="agent">
+        <div class="agent-head">
+          <div class="glyph" style="background:#5a8a7a">SO</div>
+          <div><div class="agent-name">Solutions</div><div class="agent-tagline">Discovery + prospect demo</div></div>
+        </div>
+        <div class="agent-desc">Drives prospect discovery: industry, size, pain points, key people. Creates the prospect skeleton vault and the cloud-hosted demo. Hands signed prospects to Onboarding.</div>
+        <div class="agent-foot"><span class="status-pill"><span class="status-dot idle"></span>idle</span></div>
+      </div>
+      <div class="agent">
+        <div class="agent-head">
+          <div class="glyph" style="background:#5a8a7a">ON</div>
+          <div><div class="agent-name">Onboarding</div><div class="agent-tagline">Day 0–90 lifecycle</div></div>
+        </div>
+        <div class="agent-desc">Owns the first 30–90 days of a new paying customer. Goal: customer replaces a real task by Day 7, expansion-shaped by Day 30, sticky by Day 90.</div>
+        <div class="agent-foot"><span class="status-pill"><span class="status-dot idle"></span>idle</span></div>
+      </div>
+      <div class="agent">
+        <div class="agent-head">
+          <div class="glyph" style="background:#5a8a7a">IM</div>
+          <div><div class="agent-name">Implementation</div><div class="agent-tagline">Custom configuration</div></div>
+        </div>
+        <div class="agent-desc">Builds custom integrations + per-customer extensions when standard agents aren't enough. n8n-first heuristic: if it can be n8n, it should be n8n before custom code.</div>
+        <div class="agent-foot"><span class="status-pill"><span class="status-dot idle"></span>idle</span></div>
+      </div>
+      <div class="agent new">
+        <div class="agent-head">
+          <div class="glyph" style="background:#22d3ee">CH</div>
+          <div><div class="agent-name">Champion</div><div class="agent-tagline">Customer-side enablement coach (1:1)</div></div>
+        </div>
+        <div class="agent-desc">1:1 coach for each customer's designated Champion. Walks them through Obsidian / dashboard / workflows / credentials setup, available 24/7 via Telegram, tracks Champion confidence over time. Solves the "we can't be there for every customer" scaling pain.</div>
+        <div class="agent-foot">
+          <span class="status-pill"><span class="status-dot active"></span>active</span>
+          <span class="new-badge">NEW · 2026-04-30</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BUILD (engineering) -->
+  <section class="team">
+    <div class="team-head" style="color:#6b8e6b">
+      <span class="team-name">Build · Engineering + Product</span>
+      <span class="team-count">5 agents</span>
+      <span class="team-bar"></span>
+    </div>
+    <div class="agents-grid">
+      <div class="agent">
+        <div class="agent-head">
+          <div class="glyph" style="background:#6b8e6b">PR</div>
+          <div><div class="agent-name">Product</div><div class="agent-tagline">Specs, PRDs, releases</div></div>
+        </div>
+        <div class="agent-desc">Product specs, PRDs, release notes, user stories, acceptance criteria, roadmap pruning.</div>
+        <div class="agent-foot"><span class="status-pill"><span class="status-dot active"></span>active</span></div>
+      </div>
+      <div class="agent">
+        <div class="agent-head">
+          <div class="glyph" style="background:#6b8e6b">EN</div>
+          <div><div class="agent-name">Engineering</div><div class="agent-tagline">Architecture, ADRs, reviews</div></div>
+        </div>
+        <div class="agent-desc">Engineering team lead. Architecture, ADRs, code review, technical depth across the stack.</div>
+        <div class="agent-foot"><span class="status-pill"><span class="status-dot active"></span>active</span></div>
+      </div>
+      <div class="agent">
+        <div class="agent-head">
+          <div class="glyph" style="background:#6b8e6b">FE</div>
+          <div><div class="agent-name">Frontend</div><div class="agent-tagline">React/Next.js/Tailwind, UI</div></div>
+        </div>
+        <div class="agent-desc">React/Next.js/Tailwind, UI implementation, accessibility, component design.</div>
+        <div class="agent-foot"><span class="status-pill"><span class="status-dot active"></span>active</span></div>
+      </div>
+      <div class="agent">
+        <div class="agent-head">
+          <div class="glyph" style="background:#6b8e6b">BE</div>
+          <div><div class="agent-name">Backend</div><div class="agent-tagline">APIs, databases, server</div></div>
+        </div>
+        <div class="agent-desc">Node.js APIs, database schema, server architecture, validation layers, streaming endpoints.</div>
+        <div class="agent-foot"><span class="status-pill"><span class="status-dot idle"></span>idle</span></div>
+      </div>
+      <div class="agent">
+        <div class="agent-head">
+          <div class="glyph" style="background:#6b8e6b">DV</div>
+          <div><div class="agent-name">DevOps</div><div class="agent-tagline">CI/CD, Docker, monitoring</div></div>
+        </div>
+        <div class="agent-desc">CI/CD pipelines, Docker, infrastructure, monitoring, runbooks. Deploys + recovery.</div>
+        <div class="agent-foot"><span class="status-pill"><span class="status-dot idle"></span>idle</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AUTOMATION -->
+  <section class="team">
+    <div class="team-head" style="color:#8a6e9e">
+      <span class="team-name">Automation</span>
+      <span class="team-count">1 agent</span>
+      <span class="team-bar"></span>
+    </div>
+    <div class="agents-grid">
+      <div class="agent">
+        <div class="agent-head">
+          <div class="glyph" style="background:#8a6e9e">N8</div>
+          <div><div class="agent-name">Automation</div><div class="agent-tagline">n8n workflow design + deployment</div></div>
+        </div>
+        <div class="agent-desc">n8n workflow design + direct deployment. Trigger layer for the COO orchestrator: webhooks, cron, inbound email, file changes. The kettle, not the chef.</div>
+        <div class="agent-foot"><span class="status-pill"><span class="status-dot active"></span>active</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESEARCH -->
+  <section class="team">
+    <div class="team-head" style="color:#4a7c8a">
+      <span class="team-name">Research · Strategy</span>
+      <span class="team-count">2 agents</span>
+      <span class="team-bar"></span>
+    </div>
+    <div class="agents-grid">
+      <div class="agent">
+        <div class="agent-head">
+          <div class="glyph" style="background:#4a7c8a">ST</div>
+          <div><div class="agent-name">Strategy</div><div class="agent-tagline">GTM, competitive, pricing</div></div>
+        </div>
+        <div class="agent-desc">Go-to-market strategy, competitive intelligence, pricing, positioning, market sizing, battlecards.</div>
+        <div class="agent-foot"><span class="status-pill"><span class="status-dot active"></span>active</span></div>
+      </div>
+      <div class="agent">
+        <div class="agent-head">
+          <div class="glyph" style="background:#4a7c8a">RS</div>
+          <div><div class="agent-name">Research</div><div class="agent-tagline">Prospect briefs, vendor evals</div></div>
+        </div>
+        <div class="agent-desc">Prospect briefs before sales calls, vendor evaluations, technical research, market scans.</div>
+        <div class="agent-foot"><span class="status-pill"><span class="status-dot active"></span>active</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PEOPLE -->
+  <section class="team">
+    <div class="team-head" style="color:#8a5e7a">
+      <span class="team-name">People</span>
+      <span class="team-count">1 agent</span>
+      <span class="team-bar"></span>
+    </div>
+    <div class="agents-grid">
+      <div class="agent">
+        <div class="agent-head">
+          <div class="glyph" style="background:#8a5e7a">PP</div>
+          <div><div class="agent-name">People</div><div class="agent-tagline">Hiring, JDs, performance</div></div>
+        </div>
+        <div class="agent-desc">Hiring strategy, job descriptions, performance review templates, team-comms templates.</div>
+        <div class="agent-foot"><span class="status-pill"><span class="status-dot active"></span>active</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SUPPLY -->
+  <section class="team">
+    <div class="team-head" style="color:#7a6248">
+      <span class="team-name">Supply · Operations</span>
+      <span class="team-count">2 agents</span>
+      <span class="team-bar"></span>
+    </div>
+    <div class="agents-grid">
+      <div class="agent">
+        <div class="agent-head">
+          <div class="glyph" style="background:#7a6248">OP</div>
+          <div><div class="agent-name">Operations</div><div class="agent-tagline">Internal processes, partnerships</div></div>
+        </div>
+        <div class="agent-desc">Internal processes, SOPs, partnerships, vendor management, runbooks. Cross-customer ops patterns surface here.</div>
+        <div class="agent-foot"><span class="status-pill"><span class="status-dot active"></span>active</span></div>
+      </div>
+      <div class="agent">
+        <div class="agent-head">
+          <div class="glyph" style="background:#7a6248">PC</div>
+          <div><div class="agent-name">Procurement</div><div class="agent-tagline">Vendors, rate negotiation</div></div>
+        </div>
+        <div class="agent-desc">Vendor sourcing, rate negotiation, contract dispute drafting, supplier comparison.</div>
+        <div class="agent-foot"><span class="status-pill"><span class="status-dot active"></span>active</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MONEY -->
+  <section class="team">
+    <div class="team-head" style="color:#7a8e5a">
+      <span class="team-name">Money · Finance</span>
+      <span class="team-count">3 agents</span>
+      <span class="team-bar"></span>
+    </div>
+    <div class="agents-grid">
+      <div class="agent">
+        <div class="agent-head">
+          <div class="glyph" style="background:#7a8e5a">FN</div>
+          <div><div class="agent-name">Finance</div><div class="agent-tagline">Runway, burn, scenarios</div></div>
+        </div>
+        <div class="agent-desc">Runway models, burn analysis, scenario planning, budget vs actuals, expense reconciliation.</div>
+        <div class="agent-foot"><span class="status-pill"><span class="status-dot idle"></span>idle</span></div>
+      </div>
+      <div class="agent">
+        <div class="agent-head">
+          <div class="glyph" style="background:#7a8e5a">IV</div>
+          <div><div class="agent-name">Investor</div><div class="agent-tagline">Decks, updates, fundraising</div></div>
+        </div>
+        <div class="agent-desc">Investor decks, monthly investor updates, fundraising narratives, KPI tracking.</div>
+        <div class="agent-foot"><span class="status-pill"><span class="status-dot idle"></span>idle</span></div>
+      </div>
+      <div class="agent">
+        <div class="agent-head">
+          <div class="glyph" style="background:#7a8e5a">DT</div>
+          <div><div class="agent-name">Data</div><div class="agent-tagline">Analytics, retention, A/B design</div></div>
+        </div>
+        <div class="agent-desc">Analytics, retention/cohort analysis, A/B test design, dashboards, funnel drop-off analysis.</div>
+        <div class="agent-foot"><span class="status-pill"><span class="status-dot active"></span>active</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SUPPORT -->
+  <section class="team">
+    <div class="team-head" style="color:#8a4a3a">
+      <span class="team-name">Support · CX</span>
+      <span class="team-count">1 agent</span>
+      <span class="team-bar"></span>
+    </div>
+    <div class="agents-grid">
+      <div class="agent">
+        <div class="agent-head">
+          <div class="glyph" style="background:#8a4a3a">CX</div>
+          <div><div class="agent-name">CX</div><div class="agent-tagline">Health scores, churn, QBRs</div></div>
+        </div>
+        <div class="agent-desc">Customer health scores, churn analysis, QBR templates, CX playbooks, support escalation patterns.</div>
+        <div class="agent-foot"><span class="status-pill"><span class="status-dot active"></span>active</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LEGAL -->
+  <section class="team">
+    <div class="team-head" style="color:#5a6b80">
+      <span class="team-name">Legal · Compliance</span>
+      <span class="team-count">2 agents</span>
+      <span class="team-bar"></span>
+    </div>
+    <div class="agents-grid">
+      <div class="agent">
+        <div class="agent-head">
+          <div class="glyph" style="background:#5a6b80">LG</div>
+          <div><div class="agent-name">Legal</div><div class="agent-tagline">Contracts, MSAs, IP/NDA</div></div>
+        </div>
+        <div class="agent-desc">MSAs, SLAs, customer agreements, NDAs, privacy policy, ToS, IP review. Reviews drafts; defers material decisions to external counsel.</div>
+        <div class="agent-foot"><span class="status-pill"><span class="status-dot idle"></span>idle</span></div>
+      </div>
+      <div class="agent">
+        <div class="agent-head">
+          <div class="glyph" style="background:#5a6b80">RK</div>
+          <div><div class="agent-name">Compliance</div><div class="agent-tagline">SOC 2, risk register</div></div>
+        </div>
+        <div class="agent-desc">SOC 2 gap analysis, risk register, compliance evidence collection, regulatory awareness per vertical (HVNL for logistics, Privacy Act, etc.).</div>
+        <div class="agent-foot"><span class="status-pill"><span class="status-dot active"></span>active</span></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div>
+      LeedAB · Agent Roster · v1.0 · 2026·04·30 · 31 canonical agents · noindex / link-only
+    </div>
+    <div class="signature">
+      Their data, locally.
+    </div>
+  </footer>
+
+</div>
+</body>
+</html>
