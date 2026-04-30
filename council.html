@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<title>LeedAB — Council Output (YC Pitch + Plan Pressure-Test)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,300;1,9..144,400;1,9..144,600&family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c10;
+    --bg-deep: #07090c;
+    --bg-elev: #12161d;
+    --bg-elev-2: #181d27;
+    --line: #1e2531;
+    --line-soft: #161b24;
+    --line-strong: #2a3243;
+    --text: #ece7d9;
+    --text-mid: #a8a395;
+    --text-dim: #6c685e;
+    --vault: #d4a574;
+    --vault-bright: #f0c79a;
+    --vault-glow: rgba(212, 165, 116, 0.35);
+    --data: #7aa6ff;
+    --data-glow: rgba(122, 166, 255, 0.25);
+    --hot: #ff8b65;
+    --hot-glow: rgba(255, 139, 101, 0.3);
+    --green: #84c178;
+    --member1: #d4a574; /* YC partner — amber */
+    --member2: #ff8b65; /* SMB buyer — hot */
+    --member3: #7aa6ff; /* Tech critic — data blue */
+    --member4: #b08be0; /* Competitive analyst — purple */
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Fraunces', Georgia, serif;
+    font-optical-sizing: auto;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    min-height: 100vh;
+    padding: 64px 56px 96px;
+    position: relative;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0; pointer-events: none; z-index: -2;
+    background:
+      radial-gradient(ellipse 80% 60% at 75% 30%, rgba(212,165,116,0.06), transparent 60%),
+      radial-gradient(ellipse 60% 50% at 15% 80%, rgba(255,139,101,0.04), transparent 60%);
+  }
+  body::after {
+    content: '';
+    position: fixed; inset: 0; pointer-events: none; z-index: -1;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.4' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.45'/%3E%3C/svg%3E");
+    opacity: 0.05; mix-blend-mode: overlay;
+  }
+  .frame { max-width: 1280px; margin: 0 auto; }
+
+  /* CONFIDENTIAL banner */
+  .conf {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    background: linear-gradient(90deg, rgba(255,139,101,0.08), rgba(255,139,101,0.02));
+    border-bottom: 1px solid rgba(255,139,101,0.25);
+    padding: 6px 24px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--hot);
+    text-align: center;
+    z-index: 100;
+    backdrop-filter: blur(8px);
+  }
+
+  header {
+    padding: 60px 0 48px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 56px;
+    margin-top: 32px;
+  }
+  .meta-row {
+    display: flex; gap: 14px; align-items: center;
+    margin-bottom: 28px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--text-mid);
+  }
+  .meta-row .dot {
+    width: 6px; height: 6px;
+    background: var(--vault); border-radius: 50%;
+    box-shadow: 0 0 12px var(--vault-glow);
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; box-shadow: 0 0 12px var(--vault-glow); }
+    50% { opacity: 0.5; box-shadow: 0 0 4px var(--vault-glow); }
+  }
+  .meta-row .sep { color: var(--text-dim); }
+
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 300;
+    font-size: clamp(48px, 6vw, 84px);
+    line-height: 0.95;
+    letter-spacing: -0.025em;
+    margin-bottom: 14px;
+  }
+  h1 em { font-style: italic; font-weight: 400; color: var(--vault); }
+  .subtitle {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 22px;
+    line-height: 1.5;
+    color: var(--text-mid);
+    max-width: 70ch;
+    margin-bottom: 28px;
+  }
+  .subtitle b { color: var(--text); font-weight: 500; font-style: normal; }
+
+  /* VERDICT pill — the headline finding */
+  .verdict {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 28px;
+    padding: 28px 36px;
+    background: linear-gradient(135deg, rgba(255,139,101,0.10), rgba(255,139,101,0.02));
+    border: 1px solid rgba(255,139,101,0.4);
+    border-radius: 4px;
+    box-shadow: 0 0 80px -20px var(--hot-glow);
+    align-items: center;
+  }
+  .verdict-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--hot);
+    line-height: 1.5;
+    border-right: 1px solid rgba(255,139,101,0.3);
+    padding-right: 28px;
+  }
+  .verdict-text {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 22px;
+    line-height: 1.45;
+    color: var(--text);
+    letter-spacing: -0.005em;
+  }
+  .verdict-text b { color: var(--hot); font-weight: 600; font-style: normal; }
+
+  /* Section eyebrows + headers */
+  .section-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--text-dim);
+    margin-bottom: 14px;
+  }
+  h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 300; font-style: italic;
+    font-size: clamp(34px, 4vw, 48px);
+    line-height: 1.05; letter-spacing: -0.02em;
+    color: var(--text);
+    margin-bottom: 28px;
+  }
+  h2 em { font-style: italic; color: var(--vault); font-weight: 400; }
+
+  /* COUNCIL MEMBERS section */
+  section.council {
+    margin-top: 80px;
+    margin-bottom: 80px;
+  }
+  .members {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .member {
+    border: 1px solid var(--line-strong);
+    border-radius: 4px;
+    background: var(--bg-elev);
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 220px 1fr;
+  }
+  .member-tab {
+    padding: 28px 24px;
+    border-right: 1px solid var(--line-strong);
+    background: var(--bg-deep);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .member-glyph {
+    width: 56px; height: 56px;
+    border-radius: 4px;
+    border: 2px solid currentColor;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+  .member-num {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--text-dim);
+    letter-spacing: 0.05em;
+  }
+  .member-num b { color: currentColor; font-weight: 500; font-style: normal; }
+  .member-role {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 1.2;
+    color: var(--text);
+    letter-spacing: -0.005em;
+  }
+  .member-flavor {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    line-height: 1.6;
+    color: var(--text-mid);
+    letter-spacing: 0.02em;
+  }
+  .member-body {
+    padding: 28px 32px;
+    font-family: 'Fraunces', serif;
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--text);
+  }
+  .member-body b { color: currentColor; font-weight: 500; }
+  .member-body em { color: var(--text-mid); }
+  .member-body .pullout {
+    margin-top: 18px;
+    padding: 12px 16px;
+    border-left: 2px solid currentColor;
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--text-mid);
+    background: var(--bg-deep);
+  }
+  .member-body .pullout b { color: var(--text); font-weight: 500; font-style: normal; }
+
+  .m1 { color: var(--member1); }
+  .m2 { color: var(--member2); }
+  .m3 { color: var(--member3); }
+  .m4 { color: var(--member4); }
+
+  /* SYNTHESIS section */
+  section.synthesis { margin-bottom: 80px; }
+  .synthesis-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--vault), transparent);
+    margin: 64px 0;
+    opacity: 0.5;
+  }
+
+  /* The big YC interview question — pull quote */
+  .pullquote {
+    margin: 32px 0 48px;
+    padding: 36px 44px;
+    border-left: 3px solid var(--data);
+    background: linear-gradient(135deg, rgba(122,166,255,0.05), transparent);
+    position: relative;
+  }
+  .pullquote::before {
+    content: '"';
+    position: absolute;
+    top: -12px; left: 32px;
+    font-family: 'Fraunces', serif;
+    font-size: 80px;
+    line-height: 1;
+    color: var(--data);
+    opacity: 0.4;
+  }
+  .pullquote-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--data);
+    margin-bottom: 14px;
+  }
+  .pullquote-text {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 28px;
+    line-height: 1.35;
+    color: var(--text);
+    letter-spacing: -0.015em;
+  }
+
+  /* The 3 changes — numbered */
+  .changes {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+    margin-bottom: 56px;
+  }
+  .change {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 28px;
+    padding: 24px 28px;
+    border: 1px solid var(--line-strong);
+    border-radius: 4px;
+    background: var(--bg-elev);
+  }
+  .change-num {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 56px;
+    line-height: 0.85;
+    color: var(--vault);
+    border-right: 1px solid rgba(212,165,116,0.2);
+    padding-right: 24px;
+  }
+  .change-body {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .change-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 1.3;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+  .change-where {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 0.02em;
+  }
+  .change-where code {
+    background: var(--bg-deep);
+    padding: 2px 6px;
+    border-radius: 2px;
+    color: var(--vault);
+  }
+  .change-body p {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    line-height: 1.65;
+    color: var(--text-mid);
+    margin-top: 4px;
+  }
+
+  /* MUST DO callout */
+  .must-do {
+    padding: 32px 40px;
+    border: 2px solid rgba(255,139,101,0.5);
+    border-radius: 4px;
+    background: linear-gradient(135deg, rgba(255,139,101,0.08), rgba(255,139,101,0.02));
+    margin-bottom: 56px;
+    box-shadow: 0 0 60px -20px var(--hot-glow);
+  }
+  .must-do-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--hot);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .must-do-label::before {
+    content: '!';
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--hot);
+    color: var(--bg);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 700;
+    font-size: 14px;
+  }
+  .must-do-text {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 24px;
+    line-height: 1.4;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+  .must-do-text b { color: var(--hot); font-weight: 600; font-style: normal; }
+  .must-do-detail {
+    margin-top: 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    line-height: 1.65;
+    color: var(--text-mid);
+  }
+
+  /* Detail rows for Riskiest ADR / Comparable / OpenAI line */
+  .detail-row {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 32px;
+    padding: 24px 0;
+    border-top: 1px solid var(--line);
+  }
+  .detail-row:last-child { border-bottom: 1px solid var(--line); }
+  .detail-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+  .detail-label b {
+    display: block;
+    color: var(--vault);
+    font-weight: 500;
+    font-size: 13px;
+    margin-bottom: 4px;
+  }
+  .detail-content {
+    font-family: 'Fraunces', serif;
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--text);
+  }
+  .detail-content b { color: var(--vault); font-weight: 500; }
+  .detail-content em {
+    font-style: italic;
+    color: var(--text-mid);
+  }
+  .detail-content code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    background: var(--bg-deep);
+    padding: 2px 8px;
+    border-radius: 2px;
+    color: var(--vault);
+  }
+
+  /* TBD flags */
+  .tbd-section {
+    margin-top: 64px;
+    padding: 32px 36px;
+    border: 1px dashed var(--line-strong);
+    border-radius: 4px;
+    background: var(--bg-deep);
+  }
+  .tbd-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--vault);
+    margin-bottom: 8px;
+  }
+  .tbd-title {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 22px;
+    color: var(--text);
+    margin-bottom: 20px;
+  }
+  .tbd-list {
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 24px;
+  }
+  .tbd-list li {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    line-height: 1.55;
+    color: var(--text-mid);
+    padding-left: 18px;
+    position: relative;
+  }
+  .tbd-list li::before {
+    content: '☐';
+    position: absolute;
+    left: 0;
+    color: var(--vault);
+  }
+
+  /* FOOTER */
+  footer {
+    margin-top: 96px;
+    padding-top: 32px;
+    border-top: 1px solid var(--line);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 32px;
+    align-items: end;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  footer .signature {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--vault);
+    letter-spacing: 0.02em;
+    text-transform: none;
+  }
+
+  @media (max-width: 1024px) {
+    body { padding: 64px 24px 64px; }
+    .verdict { grid-template-columns: 1fr; gap: 18px; }
+    .verdict-label { border-right: none; border-bottom: 1px solid rgba(255,139,101,0.3); padding-right: 0; padding-bottom: 14px; }
+    .member { grid-template-columns: 1fr; }
+    .member-tab { border-right: none; border-bottom: 1px solid var(--line-strong); }
+    .change { grid-template-columns: 60px 1fr; gap: 18px; padding: 20px 22px; }
+    .change-num { font-size: 40px; padding-right: 14px; }
+    .detail-row { grid-template-columns: 1fr; gap: 12px; }
+    .tbd-list { grid-template-columns: 1fr; }
+    .pullquote { padding: 28px 24px; }
+    .pullquote-text { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+<div class="conf">★ confidential · adversarial review · for cofounder review only · do not distribute</div>
+<div class="frame">
+
+  <!-- ═══ HEADER ═══════════════════════════════════════════ -->
+  <header>
+    <div class="meta-row">
+      <span class="dot"></span>
+      <span>LeedAB</span>
+      <span class="sep">·</span>
+      <span>Council Output</span>
+      <span class="sep">·</span>
+      <span>YC pitch + plan pressure-test</span>
+      <span class="sep">·</span>
+      <span>2026·04·30</span>
+    </div>
+    <h1>The <em>council</em> has spoken.</h1>
+    <p class="subtitle">
+      Four adversarial personas convened to pressure-test the LeedAB plan + YC pitch: a <b>YC partner</b> doing diligence, a <b>sceptical SMB buyer</b> reading the deck, a <b>technical-architecture critic</b> reviewing the ADRs, and a <b>competitive analyst</b> mapping the market. Sharp critique, not affirmation. Each member cites the artefact you can edit.
+    </p>
+    <div class="verdict">
+      <div class="verdict-label">The single most<br>important finding</div>
+      <div class="verdict-text">
+        We are treating <b>"1 paying customer"</b> as traction without a documented case study, quoted outcome, or contracted MRR. Until <em>Tarheel</em> gives a measurable replaced-task metric and a quote in their own voice, the pitch is built on a footnote.
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══ THE COUNCIL ═══════════════════════════════════════ -->
+  <section class="council">
+    <div class="section-eyebrow">The four members</div>
+    <h2>Each speaks in their <em>voice</em>. Each cites the artefact.</h2>
+    <div class="members">
+
+      <!-- Member 1 — YC Partner -->
+      <div class="member">
+        <div class="member-tab">
+          <div class="member-glyph m1">YC</div>
+          <div class="member-num"><b>Member 01</b><br>The YC partner</div>
+          <div class="member-role m1">Garry-Tan-shaped, post-diligence</div>
+          <div class="member-flavor">Has seen 200 AI-agent pitches in 2026 alone. Sceptical by reflex. Looking for the assumption that, if wrong, kills the company.</div>
+        </div>
+        <div class="member-body">
+          <p>The thing that lands on the partner's desk reads as <b class="m1">one full-time founder, one TBD cofounder, one future hire (Ziad, Feb 2026)</b> — a single-founder-effective look. Muiez's bio is empty in <code>00_Org/cofounders/Muiez.md</code>; the application form will have to either fabricate detail or submit with placeholders, both of which a partner will spot in 30 seconds.</p>
+          <p style="margin-top:14px">The <em>"1 paying customer"</em> claim is doing massive work in this pitch but Tarheel has no public quote, no MRR figure, no measurable replaced-task metric (<code>01_Customers/Tarheel/overview.md</code> is TBD-heavy) — <b class="m1">that's not traction, that's a friend with a credit card</b>. The NSW 491 invitation forcing 3 years regional residency is a structural conflict with YC's SF program that the application doesn't address.</p>
+          <div class="pullout"><b>Sharpest interview question they will ask:</b> "Walk me through customer #2 — specifically, where they come from, what they pay, and how long it took you to close them" — and the current motion has no answer because Tarheel was inbound.</div>
+        </div>
+      </div>
+
+      <!-- Member 2 — SMB Buyer -->
+      <div class="member">
+        <div class="member-tab">
+          <div class="member-glyph m2">SM</div>
+          <div class="member-num"><b>Member 02</b><br>The sceptical SMB buyer</div>
+          <div class="member-role m2">Logistics ops manager, time-poor, burnt twice</div>
+          <div class="member-flavor">Hears "AI agent" 5 times a week. Burnt by SaaS lock-in twice already. Has zero patience for hype.</div>
+        </div>
+        <div class="member-body">
+          <p>Two problems hit me the moment I read the pitch.</p>
+          <p style="margin-top:10px"><b class="m2">First: "Mac Mini ships to your premises" — who installs it on my office network?</b> My nephew? An onsite tech costs me $400 a day; if LeedAB doesn't include white-glove install in the price, the appliance story is a non-starter for shops without an IT person.</p>
+          <p style="margin-top:10px"><b class="m2">Second:</b> $1,800/month for a 30-person op gets compared <em>directly</em> to my Xero + ServiceM8 + Sage stack, which I already trust and have integrated payroll on. The "their data, locally" line is reassuring but I've heard variations of that promise from three vendors who later got acquired or pivoted.</p>
+          <div class="pullout"><b>Vendor-risk objection that has no sharp answer in the deck:</b> "If you go bust in 18 months, what does my hand-over actually look like — contractually, who keeps the Mini, who supports it, and is there an escrow on the source code?" The current "you keep your data" answer doesn't address operational continuity, only data portability.</div>
+        </div>
+      </div>
+
+      <!-- Member 3 — Tech Critic -->
+      <div class="member">
+        <div class="member-tab">
+          <div class="member-glyph m3">EN</div>
+          <div class="member-num"><b>Member 03</b><br>The technical-architecture critic</div>
+          <div class="member-role m3">Staff engineer, has shipped at scale</div>
+          <div class="member-flavor">Knows the gap between "designed" and "shipped". Looking for the ADR most likely to need replacement and the over-confident time estimate.</div>
+        </div>
+        <div class="member-body">
+          <p><b class="m3">ADR-002 (OpenClaw + contracts-not-vibes) is the riskiest call</b> — contracts as escape hatches only work if you've actually built against a second runtime, and you haven't, so the abstraction is theoretical and will rot under shipping pressure.</p>
+          <p style="margin-top:14px">ADR-006 (manifest reorg) is in flight but I cannot find a schema-migration story for <em>live customers</em> when the canonical manifest schema changes in v1.1 — that gap will become an operational nightmare at customer #5 onward.</p>
+          <p style="margin-top:14px">The single-bot routing in ADR-001 budgets 90 seconds total wall-clock; under realistic Anthropic API tail latency (p95 ~5–8s, p99 ~15s+) you will hit the 90s ceiling on 5–10% of orchestrations once production load hits, and the <em>"fallback: looking into it"</em> guarantee turns into a customer-trust problem.</p>
+          <div class="pullout"><b>Most over-confident claim in the build plan:</b> Q3 2026 "Mac Mini physical pilots with 1-2 customers" depends on manifest reorg + COO orchestrator + Champion all shipping by August — <b>three load-bearing things shipping concurrently</b> is the standard recipe for slipping a quarter.</div>
+        </div>
+      </div>
+
+      <!-- Member 4 — Competitive Analyst -->
+      <div class="member">
+        <div class="member-tab">
+          <div class="member-glyph m4">CA</div>
+          <div class="member-num"><b>Member 04</b><br>The competitive analyst</div>
+          <div class="member-role m4">Maps the AI-agent market for a living</div>
+          <div class="member-flavor">Knows what's shipping and what's vapor. Looking for sharp competitor differentiation and the open-source threat.</div>
+        </div>
+        <div class="member-body">
+          <p>Closest direct competitor pitching local-first AI for SMBs right now is <b class="m4">Sintra</b> — they've shipped a multi-agent product to thousands of SMBs, their pricing ladder is public, and their go-to-market is studyable. <em>You don't mention them anywhere in the pitch.</em></p>
+          <p style="margin-top:14px"><b class="m4">Lindy</b> is the most-funded multi-agent platform in 2026; cloud-hosted (your differentiator) but their pricing pressure will define the market's expectation.</p>
+          <p style="margin-top:14px"><b class="m4">CrewAI + Ollama on a customer's existing Mac is a real threat</b> for technical SMBs — zero cost, full control, no vendor risk. LeedAB's defence is "non-technical SMBs don't ship CrewAI" which is true today but the gap closes every six months as the agent frameworks mature.</p>
+          <div class="pullout"><b>One-line answer to "why won't OpenAI / Anthropic just build this?":</b> <em>"OpenAI does not ship Mac Minis. The local-first hardware-aware pitch is structurally inconvenient for cloud-first incumbents — they would cannibalise their compute margin."</em> Defensible — until one of them shifts strategy. Anthropic specifically (Computer Use product) has shown signs of caring about the local-execution surface.</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══ SYNTHESIS ═══════════════════════════════════════ -->
+  <section class="synthesis">
+    <div class="section-eyebrow">Synthesis — what this means for Mina</div>
+    <h2>The <em>verdict</em>, ordered by what to do first.</h2>
+
+    <!-- The YC interview question -->
+    <div class="pullquote">
+      <div class="pullquote-label">The question they will ask you, that you cannot dodge</div>
+      <div class="pullquote-text">
+        "Walk me through customer #2. Where do they come from, what do they pay, and how long did it take you to close them?"
+      </div>
+    </div>
+
+    <!-- 3 changes -->
+    <div class="section-eyebrow" style="margin-top:48px">Three specific changes before submitting</div>
+    <div class="changes">
+      <div class="change">
+        <div class="change-num">1</div>
+        <div class="change-body">
+          <div class="change-title">Populate Muiez's cofounder profile</div>
+          <div class="change-where">Edit: <code>00_Org/cofounders/Muiez.md</code> · Real bio, role, equity split, full-time-vs-part-time status.</div>
+          <p>Submitting with TBDs in cofounder fields is a partner-level red flag. They will spot it in 30 seconds.</p>
+        </div>
+      </div>
+      <div class="change">
+        <div class="change-num">2</div>
+        <div class="change-body">
+          <div class="change-title">Populate Tarheel customer detail with measurable outcome</div>
+          <div class="change-where">Edit: <code>01_Customers/Tarheel/overview.md</code> · Replaced-task metric, one-paragraph quote in Tarheel's voice, contract length, current MRR.</div>
+          <p>This becomes the "Why this is what your customers want" answer in the YC application — without it, traction reads as a friend with a credit card.</p>
+        </div>
+      </div>
+      <div class="change">
+        <div class="change-num">3</div>
+        <div class="change-body">
+          <div class="change-title">Address the NSW 491 vs YC SF conflict explicitly</div>
+          <div class="change-where">Edit: <code>02_Sales/yc-application-draft.md</code> · Propose a workable shape (remote participation, deferred batch, regional NSW co-headquarters).</div>
+          <p>Pretending the constraint isn't there is worse than naming it directly. The 491 invitation is a structural fact; address it head-on or the partner will.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- MUST DO -->
+    <div class="must-do">
+      <div class="must-do-label">MUST do this week — before submitting</div>
+      <div class="must-do-text">
+        Ask <b>Tarheel</b> directly: <em>"If you had to describe what LeedAB does for you in one sentence to another logistics owner, what would you say?"</em> — and follow up with: <em>"What measurable outcome can I quote publicly?"</em>
+      </div>
+      <div class="must-do-detail">
+        If they cannot articulate it sharply, the moat thesis is shaky and the pitch needs reframing. If they can, that quote becomes the spine of the YC application + the demo video.
+      </div>
+    </div>
+
+    <!-- Detail rows -->
+    <div class="detail-row">
+      <div class="detail-label">
+        <b>Riskiest ADR</b>
+        Most likely to need replacement within 6 months
+      </div>
+      <div class="detail-content">
+        <b>ADR-002 (OpenClaw + contracts-not-vibes).</b> <em>Trigger that forces reversal:</em> OpenClaw ships a breaking change or pricing shift before LeedAB has actually built against a second runtime — at which point the "contracts" abstraction is revealed as theoretical and the swap takes months not weeks. <em>Mitigation:</em> ship a thin Anthropic Computer Use adapter behind the same contracts within Q2 2026, even if you don't activate it, just to prove the discipline holds.
+      </div>
+    </div>
+
+    <div class="detail-row">
+      <div class="detail-label">
+        <b>Comparable to study</b>
+        The company most worth a deep read this week
+      </div>
+      <div class="detail-content">
+        <b>Sintra.</b> They've shipped a multi-agent SMB-focused product to scale. Their pricing ladder is public and their customer-acquisition motion is the most directly studyable for LeedAB's first 50-customer journey. <em>The specific lesson:</em> their tier structure (per-agent vs flat) is the question LeedAB has not yet answered.
+      </div>
+    </div>
+
+    <div class="detail-row">
+      <div class="detail-label">
+        <b>Sharp answer to "why won't Anthropic / OpenAI just build this?"</b>
+        Memorise this; it will be asked
+      </div>
+      <div class="detail-content">
+        <em>"They don't ship Mac Minis. The local-first hardware-aware pitch is structurally inconvenient for cloud-first incumbents — they would cannibalise their own compute margin."</em>
+      </div>
+    </div>
+
+    <!-- TBD section -->
+    <div class="tbd-section">
+      <div class="tbd-label">Pre-submission checklist</div>
+      <div class="tbd-title">TBD-status flags Mina must close before submitting</div>
+      <ul class="tbd-list">
+        <li>Muiez bio, role, full-time status, equity split</li>
+        <li>Tarheel measurable outcome + public quote + MRR + contract length</li>
+        <li>Demo video (60–90s screencast)</li>
+        <li>Founder video (~1 min)</li>
+        <li>Tested pricing — current numbers are hypothesis, not validated</li>
+        <li>Customer #2 acquisition motion (zero documentation)</li>
+        <li>US market entry strategy</li>
+        <li>Regional-NSW-vs-YC-batch reconciliation</li>
+        <li>Equity split between Mina + Muiez</li>
+        <li>Incorporation status</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ═══ FOOTER ═══════════════════════════════════════════ -->
+  <footer>
+    <div>
+      LeedAB · Council output · v1.0 · 2026·04·30 · adversarial review · noindex / link-only
+    </div>
+    <div class="signature">
+      Sharp because affirmation is cheap.
+    </div>
+  </footer>
+
+</div>
+</body>
+</html>
